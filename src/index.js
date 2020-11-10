@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from "react"
+import React, {useMemo} from "react"
 import PropTypes from "prop-types"
 
 const containerStyle = {
@@ -19,12 +19,12 @@ const tailStyle = {
 }
 
 const Truncate = ({children, tailLength, className = "", title = children}) => {
-  const [[init, tail], setText] = useState([children, ""])
-
-  useEffect(() => {
+  const [init, tail] = useMemo(() => {
     if (tailLength > 0) {
-      setText([children.slice(0, -tailLength), children.slice(-tailLength)])
+      return [children.slice(0, -tailLength), children.slice(-tailLength)]
     }
+
+    return [children, ""]
   }, [children, tailLength])
 
   return (
