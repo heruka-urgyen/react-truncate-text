@@ -19,10 +19,12 @@ const tailStyle = {
 }
 
 const Truncate = ({children, tailLength, className = "", title = children}) => {
-  const [[init, tail], setText] = useState(["", ""])
+  const [[init, tail], setText] = useState([children, ""])
 
   useEffect(() => {
-    setText([children.slice(0, -tailLength), children.slice(-tailLength)])
+    if (tailLength > 0) {
+      setText([children.slice(0, -tailLength), children.slice(-tailLength)])
+    }
   }, [children, tailLength])
 
   return (
