@@ -1,0 +1,12 @@
+{
+  "name": "@heruka_urgyen/react-truncate-text",
+  "version": "0.0.0",
+  "description": "Truncate overflown text in react component",
+  "main": "lib/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": ["react", "truncate", "text", "ellipsis"],
+  "author": "Ilya Malyanov",
+  "license": "MIT"
+}
