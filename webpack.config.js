@@ -7,6 +7,7 @@ module.exports = {
     path: path.resolve(__dirname, "lib"),
     libraryTarget: "umd",
   },
+  externals: ["react", "react-dom"],
   module: {
     rules: [
       {
