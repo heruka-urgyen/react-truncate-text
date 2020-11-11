@@ -4,6 +4,7 @@
   "description": "Truncate overflown text in react component",
   "main": "lib/index.js",
   "scripts": {
+    "deploy": "./deploy.sh",
     "prepare": "webpack",
     "example": "cd example && webpack serve --env development",
     "lint": "eslint src .eslintrc.js",
