@@ -18,13 +18,15 @@ const tailStyle = {
   whiteSpace: "pre",
 }
 
-const Truncate = ({children, tailLength, className = "", title = children}) => {
+const Truncate = ({children = "", tailLength, className, title = children}) => {
   const [init, tail] = useMemo(() => {
+    const text = children.toString()
+
     if (tailLength > 0) {
-      return [children.slice(0, -tailLength), children.slice(-tailLength)]
+      return [text.slice(0, -tailLength), text.slice(-tailLength)]
     }
 
-    return [children, ""]
+    return [text, ""]
   }, [children, tailLength])
 
   return (
