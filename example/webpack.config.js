@@ -1,9 +1,12 @@
 const path = require("path")
 const HtmlWebpackPlugin = require("html-webpack-plugin")
 
-module.exports = {
-  mode: "development",
-  entry: "./index.js",
+module.exports = env => ({
+  mode: env.development ? "development" : "production",
+  entry: [
+   "core-js/stable",
+    "./index.js",
+  ],
   output: {
     filename: "index.js",
     path: path.resolve(__dirname, "dist"),
@@ -34,4 +37,4 @@ module.exports = {
       },
     ],
   },
-}
+})
