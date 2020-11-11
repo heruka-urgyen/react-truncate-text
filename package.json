@@ -1,6 +1,6 @@
 {
   "name": "@heruka_urgyen/react-truncate-text",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Truncate overflown text in react component",
   "main": "lib/index.js",
   "scripts": {
