@@ -1,6 +1,6 @@
 import React, {useMemo, useState, useRef, useEffect} from "react"
 import PropTypes from "prop-types"
-import useResizeObserver from "use-resize-observer"
+import useResizeObserver from "use-resize-observer/polyfilled"
 
 const containerStyle = {
   display: "flex",
@@ -24,7 +24,7 @@ const onCopy = e => {
   e.preventDefault()
 
   const text = window.getSelection().toString()
-  e.clipboardData.setData("text/plain", text.replace("\n", ""))
+  e.clipboardData.setData("text", text.replace("\n", ""))
 }
 
 const Truncate = ({children = "", tailLength = 0, className, title = children}) => {
