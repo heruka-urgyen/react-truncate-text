@@ -20,6 +20,12 @@ const tailStyle = {
 }
 
 const sum = xs => xs.reduce((x, y) => x + y, 0)
+const onCopy = e => {
+  e.preventDefault()
+
+  const text = window.getSelection().toString()
+  e.clipboardData.setData("text/plain", text.replace("\n", ""))
+}
 
 const Truncate = ({children = "", tailLength = 0, className, title = children}) => {
   const [initRef, tailRef] = [useRef(), useRef()]
@@ -54,7 +60,7 @@ const Truncate = ({children = "", tailLength = 0, className, title = children}) 
   }, [width, textWidth])
 
   return (
-    <div ref={ref} className={className} style={containerStyle} title={title}>
+    <div ref={ref} className={className} style={containerStyle} title={title} onCopy={onCopy}>
       <span ref={initRef} style={initStyle}>
         {init}
       </span>
