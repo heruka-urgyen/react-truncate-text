@@ -19,5 +19,6 @@ global.document = window.document
 global.navigator = {userAgent: "node.js"}
 global.requestAnimationFrame = callback => setTimeout(callback, 0)
 global.cancelAnimationFrame = clearTimeout
+global.ResizeObserver = () => ({observe: _ => _})
 
 copyProps(window, global)

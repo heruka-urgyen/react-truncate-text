@@ -21,7 +21,8 @@
   "author": "Ilya Malyanov",
   "license": "MIT",
   "dependencies": {
-    "prop-types": "^15.7.2"
+    "prop-types": "^15.7.2",
+    "use-resize-observer": "^7.0.0"
   },
   "peerDependencies": {
     "react": ">=16.13.0",
