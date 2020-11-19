@@ -4,23 +4,24 @@ import "./style.css"
 
 import React, {useState} from "react"
 import {render} from "react-dom"
+import {VariableSizeGrid as Grid} from "react-window"
 import Truncate from "../src/index"
 
-const range = (x, y) => Array.from({length: (y + 1) - x}, (_, i) => (x + i))
 const randomDigit = () => Math.floor(Math.random() * 10)
 
-const Cell = ({randomize, even}) => {
+const Cell = randomize => ({columnIndex, style}) => {
   const length = randomDigit()
-  const description = even ?
+  const odd = columnIndex % 2 === 1
+  const description = odd ?
     `This cell has custom title, class and tail length of ${length}` :
     `This cell has tail length of ${length}`
 
-  const title = even ? "This is a custom title" : undefined
-  const className = even ? "even" : undefined
-  const style = randomize ? {width: `${Math.max(100, randomDigit() * 30)}px`} : null
+  const title = odd ? "This is a custom title" : undefined
+  const className = odd ? "odd" : undefined
+  const style2 = odd && randomize ? {width: `${Math.max(100, randomDigit() * 30)}px`} : null
 
   return (
-    <div className="cell" style={style}>
+    <div className="cell" style={{...style, ...style2}}>
       <Truncate tailLength={length} title={title} className={className}>
         {description}
       </Truncate>
@@ -29,8 +30,8 @@ const Cell = ({randomize, even}) => {
 }
 
 const Table = () => {
-  const [randomize, setRandomize] = useState(false)
   const rows = 2000
+  const [randomize, setRandomize] = useState(true)
 
   return (
     <div>
@@ -44,12 +45,16 @@ const Table = () => {
         />
         randomize width
       </label>
-      {range(1, rows).map(i => (
-        <div key={i}>
-          <Cell />
-          <Cell randomize={i > 1 && randomize} even />
-        </div>
-      ))}
+      <Grid
+        columnCount={2}
+        columnWidth={i => i % 2 === 0 ? 220 : 360}
+        height={window.screen.height - 200}
+        rowCount={rows}
+        rowHeight={() => 40}
+        width={800}
+      >
+        {Cell(randomize)}
+      </Grid>
     </div>
   )
 }
