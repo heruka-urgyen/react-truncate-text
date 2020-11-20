@@ -1,0 +1,4 @@
+.react-truncate-text-truncated::after {
+  content: "...";
+}
+
