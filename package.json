@@ -22,6 +22,7 @@
   "license": "MIT",
   "dependencies": {
     "prop-types": "^15.7.2",
+    "text-metrics": "^2.0.2",
     "use-resize-observer": "^7.0.0"
   },
   "peerDependencies": {

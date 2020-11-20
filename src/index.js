@@ -1,6 +1,7 @@
 import React, {useMemo, useState, useRef, useEffect} from "react"
 import PropTypes from "prop-types"
 import useResizeObserver from "use-resize-observer/polyfilled"
+import textMetrics from "text-metrics"
 
 import "./style.css"
 
@@ -24,6 +25,23 @@ const getInitStyle = tailLength => tailLength > 0 ? {} : {
 }
 
 const sum = xs => xs.reduce((x, y) => x + y, 0)
+const getInitLen = (el, availableWidth, text, n) => {
+  if (availableWidth < 2) {
+    return 1
+  }
+
+  const size = Math.floor(
+    textMetrics.init(el).width(`${text.slice(0, n)}...`)
+  )
+
+  const r = Math.floor(availableWidth / size)
+
+  if (size < availableWidth) {
+    return getInitLen(el, availableWidth, text, n + r)
+  }
+
+  return Math.max(1, n - 1)
+}
 
 const Truncate = ({children = "", tailLength = 0, className, title = children}) => {
   const [initRef, tailRef] = [useRef(), useRef()]
@@ -42,6 +60,7 @@ const Truncate = ({children = "", tailLength = 0, className, title = children}) 
   const [[textWidth, charWidth], setTextWidth] = useState([0, 0])
 
   const {ref, width} = useResizeObserver()
+  const containerRef = textWidth > 0 ? ref : null
   const isTruncated = width < textWidth
 
   useEffect(() => {
@@ -56,8 +75,8 @@ const Truncate = ({children = "", tailLength = 0, className, title = children}) 
   useEffect(() => {
     if (tailLength > 0) {
       if (isTruncated) {
-        const charLen = Math.floor((width - charWidth * tailLength) / charWidth) - 3
-        const n = Math.max(1, charLen)
+        const availableWidth = width - tailEl.offsetWidth
+        const n = getInitLen(initEl, availableWidth, textInit, 1)
 
         setText([textInit.slice(0, n), textInit.slice(n)])
       } else {
@@ -67,7 +86,7 @@ const Truncate = ({children = "", tailLength = 0, className, title = children}) 
   }, [width, textWidth])
 
   return (
-    <div ref={ref} className={className} style={containerStyle} title={title}>
+    <div ref={containerRef} className={className} style={containerStyle} title={title}>
       <span
         ref={initRef}
         style={getInitStyle(tailLength)}
