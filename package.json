@@ -51,6 +51,7 @@
     "esm": "^3.2.25",
     "fast-check": "^2.6.1",
     "html-webpack-plugin": "^4.5.0",
+    "ignore-styles": "^5.0.1",
     "jsdom": "^16.4.0",
     "react": "^16.14.0",
     "react-dom": "^16.14.0",
@@ -91,6 +92,7 @@
   "ava": {
     "require": [
       "esm",
+      "ignore-styles",
       "@babel/register",
       "./test/_setup-enzyme-adapter.js"
     ]

@@ -22,13 +22,15 @@ testProp(
     const containerNodeStyle = getComputedStyle(containerNode)
     const textNodes = wrapper.children().first().children()
     const init = textNodes.first()
+    const mid = textNodes.at(1)
     const tail = textNodes.last()
     const initNodeStyle = getComputedStyle(init.getDOMNode())
+    const midNodeStyle = getComputedStyle(mid.getDOMNode())
     const tailNodeStyle = getComputedStyle(tail.getDOMNode())
     const titleAttr = containerNode.title
     const classNameAttr = containerNode.className
 
-    t.true(init.text() + tail.text() === wrapper.text())
+    t.true(init.text() + mid.text() + tail.text() === wrapper.text())
 
     // fallback when children are not passed
     t.true(wrapper.text() === children || wrapper.text() === "")
@@ -43,13 +45,19 @@ testProp(
     t.true(!className || classNameAttr === className)
 
     // styles are set correctly to display overflown text as ellipsis
-    t.is(containerNodeStyle.getPropertyValue("display"), "flex")
-    t.is(containerNodeStyle.getPropertyValue("width"), "100%")
-    t.is(containerNodeStyle.getPropertyValue("align-items"), "center")
-    t.is(initNodeStyle.getPropertyValue("overflow"), "hidden")
-    t.is(initNodeStyle.getPropertyValue("text-overflow"), "ellipsis")
-    t.is(initNodeStyle.getPropertyValue("min-width"), "0")
-    t.is(initNodeStyle.getPropertyValue("white-space"), "pre")
-    t.is(tailNodeStyle.getPropertyValue("white-space"), "pre")
+    t.is(containerNodeStyle.getPropertyValue("overflow"), "hidden")
+    t.is(containerNodeStyle.getPropertyValue("text-overflow"), "clip")
+    t.is(containerNodeStyle.getPropertyValue("white-space"), "pre")
+
+    if (tailLength === 0) {
+      t.is(initNodeStyle.getPropertyValue("width"), "100%")
+      t.is(initNodeStyle.getPropertyValue("display"), "inline-block")
+      t.is(initNodeStyle.getPropertyValue("overflow"), "hidden")
+      t.is(initNodeStyle.getPropertyValue("text-overflow"), "ellipsis")
+      t.is(initNodeStyle.getPropertyValue("white-space"), "nowrap")
+    }
+
+    t.is(midNodeStyle.getPropertyValue("opacity"), "0")
+    t.is(midNodeStyle.getPropertyValue("font-size"), "0px")
   },
 )
