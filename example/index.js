@@ -7,10 +7,11 @@ import {render} from "react-dom"
 import {VariableSizeGrid as Grid} from "react-window"
 import Truncate from "../src/index"
 
+const range = (x, y) => Array.from({length: (y + 1) - x}, (_, i) => (x + i))
 const randomDigit = () => Math.floor(Math.random() * 10)
 
-const Cell = randomize => ({columnIndex, style}) => {
-  const length = randomDigit()
+const Cell = randomize => ({data, rowIndex, columnIndex, style}) => {
+  const length = data[rowIndex + columnIndex]
   const odd = columnIndex % 2 === 1
   const description = odd ?
     `This cell has custom title, class and tail length of ${length}` :
@@ -18,7 +19,7 @@ const Cell = randomize => ({columnIndex, style}) => {
 
   const title = odd ? "This is a custom title" : undefined
   const className = odd ? "odd" : undefined
-  const style2 = odd && randomize ? {width: `${Math.max(100, randomDigit() * 30)}px`} : null
+  const style2 = odd && randomize ? {width: `${Math.max(100, length * 30)}px`} : null
 
   return (
     <div className="cell" style={{...style, ...style2}}>
@@ -32,6 +33,7 @@ const Cell = randomize => ({columnIndex, style}) => {
 const Table = () => {
   const rows = 2000
   const [randomize, setRandomize] = useState(true)
+  const lengths = range(1, rows).map(_ => randomDigit())
 
   return (
     <div>
@@ -46,6 +48,7 @@ const Table = () => {
         randomize width
       </label>
       <Grid
+        itemData={lengths}
         columnCount={2}
         columnWidth={i => i % 2 === 0 ? 220 : 360}
         height={window.screen.height - 200}
