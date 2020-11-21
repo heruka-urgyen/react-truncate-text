@@ -1,101 +1,89 @@
-import React, {useMemo, useState, useRef, useEffect} from "react"
+import React, {useMemo, useRef} from "react"
 import PropTypes from "prop-types"
 import useResizeObserver from "use-resize-observer/polyfilled"
 import textMetrics from "text-metrics"
 
 import "./style.css"
 
-const containerStyle = {
-  overflow: "hidden",
-  textOverflow: "clip",
-  whiteSpace: "pre",
-}
-
-const midStyle = {
-  fontSize: 0,
-  opacity: 0,
-}
-
-const getInitStyle = tailLength => tailLength > 0 ? {} : {
-  display: "inline-block",
-  overflow: "hidden",
-  textOverflow: "ellipsis",
-  whiteSpace: "nowrap",
-  width: "100%",
-}
-
-const sum = xs => xs.reduce((x, y) => x + y, 0)
-const getInitLen = (el, availableWidth, text, n) => {
-  if (availableWidth < 2) {
-    return 1
+const truncSymbol = "..."
+const getInitClassName = (tailLength, isTruncated) => {
+  if (tailLength === 0) {
+    return "react-truncate-text-no-tail"
   }
 
-  const size = Math.floor(
-    textMetrics.init(el).width(`${text.slice(0, n)}...`)
-  )
-
-  const r = Math.floor(availableWidth / size)
-
-  if (size < availableWidth) {
-    return getInitLen(el, availableWidth, text, n + r)
+  if (isTruncated) {
+    return "react-truncate-text-truncated"
   }
 
-  return Math.max(1, n - 1)
+  return undefined
+}
+
+const getTextLen = el => {
+  const metrics = textMetrics.init(el)
+
+  const inner = (width, initText, tailText, n) => {
+    const availableWidth = width - Math.ceil(metrics.width(tailText))
+    const sizeFull = Math.ceil(metrics.width(initText))
+    const isTruncated = sizeFull > availableWidth
+
+    if (!isTruncated) {
+      return [initText.length, false]
+    }
+
+    const sizeTruncated = Math.ceil(
+      metrics.width(`${initText.slice(0, n)}${truncSymbol}`),
+    )
+
+    if (sizeTruncated < availableWidth) {
+      return inner(width, initText, tailText, n + 1)
+    }
+
+    return [Math.max(1, n - 1), true]
+  }
+
+  return inner
 }
 
 const Truncate = ({children = "", tailLength = 0, className, title = children}) => {
   const [initRef, tailRef] = [useRef(), useRef()]
-  const [initEl, tailEl] = [initRef.current, tailRef.current]
-  const [text, textInit, textTail] = useMemo(() => {
+  const {ref, width} = useResizeObserver()
+  const getInitLen = useMemo(() => {
+    if (initRef.current) {
+      return getTextLen(initRef.current)
+    }
+
+    return undefined
+  }, [initRef.current])
+
+  const [isTruncated, init, middle, tail] = useMemo(() => {
     const text = children.toString()
 
-    if (tailLength > 0) {
-      return [text, text.slice(0, -tailLength), text.slice(-tailLength)]
+    if (tailLength >= text.length) {
+      return [false, "", "", text]
     }
 
-    return [text, text, ""]
-  }, [children, tailLength])
+    if (getInitLen && tailLength > 0) {
+      const textInit = text.slice(0, -tailLength)
+      const textTail = text.slice(-tailLength)
+      const [n, isT] = getInitLen(width, textInit, textTail, 1)
 
-  const [[init, middle], setText] = useState([textInit, "", textTail])
-  const [[textWidth, charWidth], setTextWidth] = useState([0, 0])
-
-  const {ref, width} = useResizeObserver()
-  const containerRef = textWidth > 0 ? ref : null
-  const isTruncated = width < textWidth
-
-  useEffect(() => {
-    if (tailLength > 0 && initEl && tailEl) {
-      const offsetWidth = sum([initEl, tailEl].map(x => x.offsetWidth))
-      const charWidth = Math.ceil(offsetWidth / text.length)
-
-      setTextWidth([offsetWidth, charWidth])
+      return [isT, textInit.slice(0, n), textInit.slice(n), textTail]
     }
-  }, [initEl, tailEl])
 
-  useEffect(() => {
-    if (tailLength > 0) {
-      if (isTruncated) {
-        const availableWidth = width - tailEl.offsetWidth
-        const n = getInitLen(initEl, availableWidth, textInit, 1)
-
-        setText([textInit.slice(0, n), textInit.slice(n)])
-      } else {
-        setText([textInit, ""])
-      }
-    }
-  }, [width, textWidth])
+    return [false, text, "", ""]
+  }, [children, tailLength, width, getInitLen])
 
   return (
-    <div ref={containerRef} className={className} style={containerStyle} title={title}>
+    <div ref={ref} className={`react-truncate-text-container ${className}`} title={title}>
       <span
         ref={initRef}
-        style={getInitStyle(tailLength)}
-        className={isTruncated ? "react-truncate-text-truncated" : null}
+        className={getInitClassName(tailLength, isTruncated)}
+        data-trunc-symbol={truncSymbol}
       >
         {init}
       </span>
-      <span style={midStyle}>{middle}</span>
-      <span ref={tailRef}>{textTail}</span>
+      <span className="react-truncate-text-mid">{middle}</span>
+      <span ref={tailRef}>{tail}</span>
     </div>
   )
 }
