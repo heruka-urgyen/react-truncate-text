@@ -4,6 +4,7 @@
   "description": "Truncate overflown text in react component",
   "main": "lib/index.js",
   "scripts": {
+    "coverage": "nyc --reporter=lcov --reporter=text ava",
     "deploy": "./deploy.sh",
     "prepare": "webpack",
     "example": "cd example && webpack serve --env development",
@@ -34,10 +35,13 @@
     "@babel/preset-env": "^7.12.1",
     "@babel/preset-react": "^7.12.5",
     "@babel/register": "^7.12.1",
+    "@istanbuljs/nyc-config-babel": "^3.0.0",
     "ava": "^3.13.0",
     "ava-fast-check": "^4.0.0",
     "babel-loader": "^8.2.0",
+    "babel-plugin-istanbul": "^6.0.0",
     "babel-plugin-module-resolver": "^4.0.0",
+    "canvas": "^2.6.1",
     "core-js": "^3.7.0",
     "css-loader": "^5.0.1",
     "enzyme": "^3.11.0",
@@ -54,6 +58,7 @@
     "html-webpack-plugin": "^4.5.0",
     "ignore-styles": "^5.0.1",
     "jsdom": "^16.4.0",
+    "nyc": "^15.1.0",
     "react": "^16.14.0",
     "react-dom": "^16.14.0",
     "react-window": "^1.8.6",
@@ -80,6 +85,7 @@
       "@babel/preset-react"
     ],
     "plugins": [
+      "istanbul",
       [
         "module-resolver",
         {
