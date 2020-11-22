@@ -18,27 +18,37 @@ const getInitClassName = (tailLength, isTruncated) => {
   return undefined
 }
 
+const identity = _ => _
+const inc = x => x + 1
+const dec = x => x - 1
+
 const getTextLen = el => {
   const metrics = textMetrics.init(el)
 
-  const inner = (width, initText, tailText, n) => {
+  const inner = (width, initText, tailText, n, mode = "inc") => {
     const availableWidth = width - Math.ceil(metrics.width(tailText))
     const sizeFull = Math.ceil(metrics.width(initText))
     const isTruncated = sizeFull > availableWidth
+    const [getNextVal, getReturnVal] = mode === "inc" ? [inc, dec] : [dec, identity]
+
+    if (mode === "dec" && n === 1) {
+      return [1, true]
+    }
 
     if (!isTruncated) {
       return [initText.length, false]
     }
 
-    const sizeTruncated = Math.ceil(
-      metrics.width(`${initText.slice(0, n)}${truncSymbol}`),
-    )
+    const sizeTruncated = Math.ceil(metrics.width(`${initText.slice(0, n)}${truncSymbol}`))
+    const recurCond = mode === "inc" ?
+      sizeTruncated < availableWidth :
+      sizeTruncated > availableWidth
 
-    if (sizeTruncated < availableWidth) {
-      return inner(width, initText, tailText, n + 1)
+    if (recurCond) {
+      return inner(width, initText, tailText, getNextVal(n), mode)
     }
 
-    return [Math.max(1, n - 1), true]
+    return [Math.max(1, getReturnVal(n)), true]
   }
 
   return inner
@@ -46,6 +56,8 @@ const getTextLen = el => {
 
 const Truncate = ({children = "", tailLength = 0, className, title = children}) => {
   const [initRef, tailRef] = [useRef(), useRef()]
+  const p = useRef({isTruncated: true, width: 0, n: 1, tailLength, text: ""})
+  const prevRender = p.current
   const {ref, width} = useResizeObserver()
   const getInitLen = useMemo(() => {
     if (initRef.current) {
@@ -55,23 +67,45 @@ const Truncate = ({children = "", tailLength = 0, className, title = children}) 
     return undefined
   }, [initRef.current])
 
-  const [isTruncated, init, middle, tail] = useMemo(() => {
-    const text = children.toString()
+  const [text, textInit, textTail] = useMemo(() => {
+    const t = children.toString()
 
-    if (tailLength >= text.length) {
+    return [t, t.slice(0, -tailLength), t.slice(-tailLength)]
+  }, [children, tailLength])
+
+  const [isTruncated, init, middle, tail] = useMemo(() => {
+    const justTail = tailLength >= text.length
+    const elWiderThanText =
+      !prevRender.isTruncated && prevRender.width < width && prevRender.text === text
+    const mode = (
+      prevRender.text.length < text.length ||
+      prevRender.width < width ||
+      prevRender.tailLength > tailLength
+    ) ? "inc" : "dec"
+
+    prevRender.text = text
+    prevRender.tailLength = tailLength
+
+    if (justTail) {
       return [false, "", "", text]
     }
 
     if (getInitLen && tailLength > 0) {
-      const textInit = text.slice(0, -tailLength)
-      const textTail = text.slice(-tailLength)
-      const [n, isT] = getInitLen(width, textInit, textTail, 1)
+      if (elWiderThanText) {
+        return [false, textInit, "", textTail]
+      }
 
-      return [isT, textInit.slice(0, n), textInit.slice(n), textTail]
+      const [n, isTruncatedNext] = getInitLen(width, textInit, textTail, prevRender.n, mode)
+
+      prevRender.n = n
+      prevRender.width = width
+      prevRender.isTruncated = isTruncatedNext
+
+      return [isTruncatedNext, textInit.slice(0, n), textInit.slice(n), textTail]
     }
 
     return [false, text, "", ""]
-  }, [children, tailLength, width, getInitLen])
+  }, [text, tailLength, width, getInitLen])
 
   return (
     <div ref={ref} className={`react-truncate-text-container ${className}`} title={title}>
