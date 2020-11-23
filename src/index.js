@@ -54,7 +54,12 @@ const getTextLen = el => {
   return inner
 }
 
-const Truncate = ({children = "", tailLength = 0, className, title = children}) => {
+const Truncate = props => {
+  const children = props.children || ""
+  const title = props.title || children
+  const className = props.className || ""
+  const tailLength = parseInt(props.tailLength, 10) || 0
+
   const [initRef, tailRef] = [useRef(), useRef()]
   const p = useRef({isTruncated: true, width: 0, n: 1, tailLength, text: ""})
   const prevRender = p.current
