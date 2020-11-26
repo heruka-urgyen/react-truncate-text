@@ -4,12 +4,13 @@
   white-space: nowrap;
 }
 
+
 .react-truncate-text-no-tail {
   display: inline-block;
   overflow: hidden;
   text-overflow: ellipsis;
   vertical-align: bottom;
-  whiteSpace: nowrap;
+  white-space: nowrap;
   width: 100%;
 }
 
@@ -21,4 +22,3 @@
   font-size: 0;
   opacity: 0;
 }
-
