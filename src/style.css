@@ -1,0 +1,24 @@
+.react-truncate-text-container {
+  overflow: hidden;
+  text-overflow: clip;
+  white-space: nowrap;
+}
+
+
+.react-truncate-text-no-tail {
+  display: inline-block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: bottom;
+  white-space: nowrap;
+  width: 100%;
+}
+
+.react-truncate-text-truncated::after {
+  content: attr(data-trunc-symbol);
+}
+
+.react-truncate-text-mid {
+  font-size: 0;
+  opacity: 0;
+}

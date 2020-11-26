@@ -7,20 +7,58 @@
   justify-content: center;
 }
 
-.cell {
+.controlled-container {
+  width: 300px;
+}
+
+.text-container {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+
+.value {
+  line-height: 2em;
+  padding: 2px;
+  flex: 1;
+}
+
+.tail-length {
+  line-height: 2em;
+  padding: 2px;
+  width: 3em;
+}
+
+.controlled-truncate-container {
   display: inline-block;
-  resize: horizontal;
+  /* resize: horizontal; */
   overflow: hidden;
   border: 1px solid black;
   padding: 10px;
+  width: 100%;
+  min-height: 40px;
 }
 
-.even {
+.styled-truncate span:last-child {
   color: green;
-  cursor: help;
 }
 
 h1 {
   display: inline-block;
   margin-right: 20px;
+}
+
+table {
+  border-collapse: collapse;
+}
+
+.row {
+  line-height: 40px;
+}
+
+.col {
+  border: 1px solid #000;
+  margin: 0;
+  max-width: 200px;
+  min-width: 200px;
 }

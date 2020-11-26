@@ -27,6 +27,7 @@ module.exports = {
     "react/jsx-filename-extension": 0,
     "react/jsx-one-expression-per-line": 0,
     "react/require-default-props": ["error", {ignoreFunctionalComponents: true}],
+    "react/destructuring-assignment": 0,
     "operator-linebreak": ["error", "after"],
     "implicit-arrow-linebreak": 0,
     "function-paren-newline": 0,

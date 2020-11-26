@@ -3,10 +3,16 @@ const HtmlWebpackPlugin = require("html-webpack-plugin")
 
 module.exports = env => ({
   mode: env.development ? "development" : "production",
-  entry: [
-   "core-js/stable",
-    "./index.js",
-  ],
+  entry: env.development ?
+    [
+      "webpack-dev-server/client?http://localhost:9000",
+      "core-js/stable",
+      "./index.js",
+    ] :
+    [
+      "core-js/stable",
+      "./index.js",
+    ],
   output: {
     filename: "index.js",
     path: path.resolve(__dirname, "dist"),
