@@ -31,7 +31,7 @@
 
 .controlled-truncate-container {
   display: inline-block;
-  resize: horizontal;
+  /* resize: horizontal; */
   overflow: hidden;
   border: 1px solid black;
   padding: 10px;
@@ -43,20 +43,22 @@
   color: green;
 }
 
-.cell {
-  display: inline-block;
-  resize: horizontal;
-  overflow: hidden;
-  border: 1px solid black;
-  padding: 10px;
-}
-
-.randomize-toggle,
-.randomize-toggle input {
-  cursor: pointer;
-}
-
 h1 {
   display: inline-block;
   margin-right: 20px;
+}
+
+table {
+  border-collapse: collapse;
+}
+
+.row {
+  line-height: 40px;
+}
+
+.col {
+  border: 1px solid #000;
+  margin: 0;
+  max-width: 200px;
+  min-width: 200px;
 }
